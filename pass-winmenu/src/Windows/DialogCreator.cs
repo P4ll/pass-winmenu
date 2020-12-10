@@ -107,8 +107,22 @@ namespace PassWinmenu.Windows
 			{
 				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 			}
-			// Add the password to Git
-			syncService?.AddPassword(passwordFile.FullPath);
+
+			try
+			{
+				// Add the password to Git
+				syncService?.AddPassword(passwordFile.FullPath);
+			}
+			catch (GitException e)
+			{
+				notificationService.ShowErrorWindow($"Failed to commit your password: {e}");
+				Log.ReportException(e);
+			}
+			catch (Exception e)
+			{
+				notificationService.ShowErrorWindow($"Failed to commit your password. An error occurred: {e}");
+				Log.ReportException(e);
+			}
 		}
 
 		/// <summary>
@@ -391,11 +405,13 @@ namespace PassWinmenu.Windows
 				catch (GitException e)
 				{
 					notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
+					Log.ReportException(e);
 					EditWithEditWindow(newFile);
 				}
 				catch (Exception e)
 				{
 					notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
+					Log.ReportException(e);
 					EditWithEditWindow(newFile);
 				}
 			}
@@ -494,11 +510,13 @@ namespace PassWinmenu.Windows
 				catch (GitException e)
 				{
 					notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
+					Log.ReportException(e);
 					EditWithTextEditor(newPasswordFile);
 				}
 				catch (Exception e)
 				{
 					notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
+					Log.ReportException(e);
 					EditWithTextEditor(newPasswordFile);
 				}
 			}

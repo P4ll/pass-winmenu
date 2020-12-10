@@ -34,8 +34,18 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			// First, commit any uncommitted files
-			syncService.Commit();
+			try
+			{
+				// First, commit any uncommitted files
+				syncService.Commit();
+			}
+			catch (Exception e)
+			{
+				notificationService.ShowErrorWindow(
+					$"Failed to commit your changes. An error occurred: {e.Message}");
+				Log.ReportException(e);
+				return;
+			}
 			// Now fetch the latest changes
 			try
 			{
@@ -112,8 +122,9 @@ namespace PassWinmenu.Actions
 			}
 			else if (remote > 0)
 			{
-				notificationService.Raise($"Nothing to commit. {remote} changes were pulled from remote.",
-										  Severity.Info);
+				notificationService.Raise(
+					$"Nothing to commit. {remote} changes were pulled from remote.",
+					Severity.Info);
 			}
 		}
 	}
