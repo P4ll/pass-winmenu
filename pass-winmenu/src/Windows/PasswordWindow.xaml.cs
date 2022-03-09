@@ -27,6 +27,8 @@ namespace PassWinmenu.Windows
 			AddDefaultMetadata(filename);
 			RegeneratePassword();
 			Password.Focus();
+			NumberCount.Text = options.Length.ToString(CultureInfo.InvariantCulture);
+			NumberCount.TextChanged += HandleCountChanged;
 		}
 
 		private void CreateCheckboxes()
@@ -67,12 +69,28 @@ namespace PassWinmenu.Windows
 
 		private void RegeneratePassword()
 		{
+			try
+			{
+				passwordGenerator.Options.Length = int.Parse(NumberCount.Text, CultureInfo.InvariantCulture);
+			}
+			catch
+			{
+				NumberCount.Text = passwordGenerator.Options.Length.ToString(CultureInfo.InvariantCulture);
+			}
 			Password.Text = passwordGenerator.GeneratePassword();
 			Password.CaretIndex = Password.Text?.Length ?? 0;
 		}
 
 		private void Btn_Generate_Click(object sender, RoutedEventArgs e)
 		{
+			try
+			{
+				passwordGenerator.Options.Length = int.Parse(NumberCount.Text, CultureInfo.InvariantCulture);
+			}
+			catch
+			{
+				NumberCount.Text = passwordGenerator.Options.Length.ToString(CultureInfo.InvariantCulture);
+			}
 			Password.Text = passwordGenerator.GeneratePassword();
 		}
 
@@ -102,6 +120,20 @@ namespace PassWinmenu.Windows
 			var checkbox = (CheckBox)sender;
 			passwordGenerator.Options.CharacterGroups.First(c => c.Name == checkbox.Name).Enabled = checkbox.IsChecked ?? false;
 
+			RegeneratePassword();
+		}
+
+		private void HandleCountChanged(object sender, RoutedEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+			try
+			{
+				passwordGenerator.Options.Length = int.Parse(textBox.Text, CultureInfo.InvariantCulture);
+			}
+			catch
+			{
+				textBox.Text = passwordGenerator.Options.Length.ToString(CultureInfo.InvariantCulture);
+			}
 			RegeneratePassword();
 		}
 
