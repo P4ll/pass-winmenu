@@ -11,7 +11,7 @@ namespace PassWinmenu.PasswordGeneration
 	{
 		public PasswordGenerationConfig Options { get; }
 
-		private readonly RNGCryptoServiceProvider csprng = new RNGCryptoServiceProvider();
+		private readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
 
 		public PasswordGenerator(PasswordGenerationConfig options)
 		{
@@ -61,7 +61,7 @@ namespace PassWinmenu.PasswordGeneration
 		{
 			// Generate a random uint64 using 8 random bytes.
 			var bytes = new byte[8];
-			csprng.GetBytes(bytes);
+			rng.GetBytes(bytes);
 			var randomNumber = BitConverter.ToUInt64(bytes, 0);
 
 			// Convert the random integer into a fraction of its maximum possible value.
@@ -73,7 +73,7 @@ namespace PassWinmenu.PasswordGeneration
 
 		public void Dispose()
 		{
-			csprng.Dispose();
+			rng.Dispose();
 		}
 	}
 }
