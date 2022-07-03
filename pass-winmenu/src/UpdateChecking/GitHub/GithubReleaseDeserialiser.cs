@@ -6,7 +6,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 {
 	public static class GithubReleaseDeserialiser
 	{
-		private static readonly JsonSerializerSettings settings = new JsonSerializerSettings
+		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
 		{
 			ContractResolver = new DefaultContractResolver
 			{
@@ -15,6 +15,6 @@ namespace PassWinmenu.UpdateChecking.GitHub
 		};
 
 		public static Release[] DeserialiseReleases(string releasesJson) => 
-			JsonConvert.DeserializeObject<Release[]>(releasesJson, settings) ?? Array.Empty<Release>();
+			JsonConvert.DeserializeObject<Release[]>(releasesJson, Settings) ?? Array.Empty<Release>();
 	}
 }

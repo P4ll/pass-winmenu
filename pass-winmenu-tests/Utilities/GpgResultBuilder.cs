@@ -3,10 +3,10 @@ using PassWinmenu.ExternalPrograms.Gpg;
 
 namespace PassWinmenuTests.Utilities
 {
-	class GpgResultBuilder
+	internal class GpgResultBuilder
 	{
-		private List<string> stderrMessages = new List<string>();
-		private List<StatusMessage> statusMessages = new List<StatusMessage>();
+		private readonly List<string> stderrMessages = new List<string>();
+		private readonly List<StatusMessage> statusMessages = new List<StatusMessage>();
 		private string stdout;
 		private int exitCode;
 

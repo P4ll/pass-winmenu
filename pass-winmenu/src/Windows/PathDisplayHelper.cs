@@ -5,13 +5,13 @@ using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.Windows
 {
-	class PathDisplayHelper
+	internal class PathDisplayHelper
 	{
 		private readonly string directorySeparator;
 
 		public PathDisplayHelper(InterfaceConfig config)
 		{
-			this.directorySeparator = config.DirectorySeparator;
+			directorySeparator = config.DirectorySeparator;
 		}
 
 		public string GetDisplayPath(PasswordFile file)

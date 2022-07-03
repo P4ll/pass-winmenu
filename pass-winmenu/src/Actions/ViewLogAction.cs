@@ -5,7 +5,7 @@ using PassWinmenu.Windows;
 
 namespace PassWinmenu.Actions
 {
-	class ViewLogAction : IAction
+	internal class ViewLogAction : IAction
 	{
 		public HotkeyAction ActionType => HotkeyAction.ViewLog;
 

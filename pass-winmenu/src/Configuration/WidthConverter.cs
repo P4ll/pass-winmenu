@@ -65,7 +65,7 @@ namespace PassWinmenu.Configuration
 
 		public void WriteYaml(IEmitter emitter, object? value, Type type)
 		{
-			throw new NotImplementedException("Width serialisation is not supported yet.");
+			throw new NotSupportedException();
 		}
 	}
 }

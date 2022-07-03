@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using PassWinmenu.PasswordManagement;
 using PassWinmenuTests.Utilities.ExtensionMethods;
-using Shouldly;
 using Xunit;
 
 namespace PassWinmenuTests.PasswordManagement

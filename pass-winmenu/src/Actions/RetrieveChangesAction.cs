@@ -4,9 +4,10 @@ using PassWinmenu.ExternalPrograms;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.Actions
 {
-	class RetrieveChangesAction : IAction
+	internal class RetrieveChangesAction : IAction
 	{
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;

@@ -6,7 +6,7 @@ using PassWinmenu.ExternalPrograms.Gpg;
 
 namespace PassWinmenu.Actions
 {
-	class OpenPasswordShellAction : IAction
+	internal class OpenPasswordShellAction : IAction
 	{
 		private readonly GpgInstallation installation;
 		private readonly PasswordStoreConfig passwordStore;
@@ -45,7 +45,7 @@ namespace PassWinmenu.Actions
 				$"-NoExit -Command \"function gpg() {{ & '{gpgExe}'{homeDir} $args }};" +
 				$"echo '\n" +
 				$"    ╔══════════════════════════════════════════════════════════╗\n" +
-				$"    ║ In this  shell, you can execute  arbitrary GPG commands. ║\n" +
+				$"    ║ In this shell, you can run  GPG commands  in your store. ║\n" +
 				$"    ║ The ''gpg'' command  has been aliased  to the same version ║\n" +
 				$"    ║ of GPG  used by pass-winmenu, and configured to make use ║\n" +
 				$"    ║ of the  same  home  directory, so  you can  access  your ║\n" +

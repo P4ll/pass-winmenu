@@ -33,7 +33,10 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				                   $"{string.Join("\n", result.StderrMessages)}");
 			}
 
-			if (result.HasStatusCodes(GpgStatusCode.FAILURE)) result.GenerateError();
+			if (result.HasStatusCodes(GpgStatusCode.FAILURE))
+			{
+				result.GenerateError();
+			}
 
 			// Now look for an indication of a successful decryption.
 			if (result.HasStatusCodes(GpgStatusCode.DECRYPTION_OKAY, GpgStatusCode.END_DECRYPTION))

@@ -97,7 +97,7 @@
     <Compile Include="src\Configuration\Classes\TextStyleConfig.cs" />
     <Compile Include="src\Configuration\ConfigurationDeserialiser.cs" />
     <Compile Include="src\Configuration\RuntimeConfiguration.cs" />
-    <Compile Include="src\Configuration\RuntimeConfigurationError.cs" />
+    <Compile Include="src\Configuration\RuntimeConfigurationException.cs" />
     <Compile Include="src\Actions\ActionDispatcher.cs" />
     <Compile Include="src\Actions\CheckForUpdatesAction.cs" />
     <Compile Include="src\Actions\CommitChangesAction.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="src\ExternalPrograms\Gpg\GpgAgentConfigUpdater.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgError.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgException.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\GpgHomedirResolver.cs" />
+    <Compile Include="src\ExternalPrograms\Gpg\GpgHomeDirResolver.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgInstallationFinder.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgResult.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgResultVerifier.cs" />
@@ -143,6 +143,8 @@
     <Compile Include="src\ExternalPrograms\Processes.cs" />
     <Compile Include="src\ExternalPrograms\ProcessWrapper.cs" />
     <Compile Include="src\ExternalPrograms\TrackingDetails.cs" />
+    <Compile Include="src\Hotkeys\MessageWindow.cs" />
+    <Compile Include="src\Hotkeys\WindowClass.cs" />
     <Compile Include="src\PasswordManagement\DecryptedPasswordFile.cs" />
     <Compile Include="src\PasswordManagement\GpgRecipientFinder.cs" />
     <Compile Include="src\PasswordManagement\KeyedPasswordFile.cs" />
@@ -160,7 +162,7 @@
     <Compile Include="src\Utilities\ExtensionMethods\EnumerableExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\FileSystemInfoExtensions.cs" />
     <Compile Include="src\Utilities\Option.cs" />
-    <Compile Include="src\WinApi\Clipboard.cs" />
+    <Compile Include="src\WinApi\TemporaryClipboard.cs" />
     <Compile Include="src\Configuration\Classes\GitConfig.cs" />
     <Compile Include="src\Configuration\Classes\GpgAgentConfig.cs" />
     <Compile Include="src\Configuration\Classes\GpgAgentConfigFile.cs" />
@@ -194,11 +196,7 @@
     <Compile Include="src\Windows\DialogCreator.cs" />
     <Compile Include="src\Utilities\DirectoryAutocomplete.cs" />
     <Compile Include="src\ExternalPrograms\ICryptoService.cs" />
-    <Compile Include="src\Hotkeys\Hotkey.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.KeyEventSource.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.Windows.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.Windows.MessageWindow.cs" />
+    <Compile Include="src\Hotkeys\WindowsHotkeyRegistrar.cs" />
     <Compile Include="src\Hotkeys\IHotkeyRegistrar.cs" />
     <Compile Include="src\WinApi\INotificationService.cs" />
     <Compile Include="src\Logger.cs" />
@@ -216,10 +214,9 @@
     <Compile Include="src\UpdateChecking\UpdateException.cs" />
     <Compile Include="src\Utilities\Disposable.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\DirectoryInfoExtensions.cs" />
-    <Compile Include="src\Utilities\ExtensionMethods\KeyEventArgsExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="src\Hotkeys\HotkeyException.cs" />
-    <Compile Include="src\Hotkeys\HotkeyManager.cs" />
+    <Compile Include="src\Hotkeys\HotkeyService.cs" />
     <Compile Include="src\Hotkeys\KeyCombination.cs" />
     <Compile Include="src\Configuration\Classes\Config.cs" />
     <Compile Include="src\Configuration\ConfigManager.cs" />
@@ -245,6 +242,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\Windows\PathDisplayHelper.cs" />
+    <Compile Include="src\Windows\ScrollableView.cs" />
     <Compile Include="src\Windows\SelectionLabel.xaml.cs">
       <DependentUpon>SelectionLabel.xaml</DependentUpon>
     </Compile>
@@ -366,6 +364,9 @@
     </PackageReference>
     <PackageReference Include="Otp.NET">
       <Version>1.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="PInvoke.User32">
+      <Version>0.7.104</Version>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions">
       <Version>10.0.1</Version>

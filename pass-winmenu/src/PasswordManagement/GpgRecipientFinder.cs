@@ -18,7 +18,7 @@ namespace PassWinmenu.PasswordManagement
 		{
 			this.passwordStore = passwordStore;
 			this.environmentVariables = environmentVariables;
-			this.fileSystem = passwordStore.FileSystem;
+			fileSystem = passwordStore.FileSystem;
 		}
 
 		public string[] FindRecipients(PasswordFile file)

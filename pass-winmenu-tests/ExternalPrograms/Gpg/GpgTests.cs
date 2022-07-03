@@ -247,33 +247,33 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		{
 			return new GpgResultBuilder().Build();
 		}
-	}
 
-	class StubGpgResultVerifier : IGpgResultVerifier
-	{
-		private readonly bool valid;
-
-		private StubGpgResultVerifier(bool valid)
+		private class StubGpgResultVerifier : IGpgResultVerifier
 		{
-			this.valid = valid;
-		}
+			private readonly bool valid;
 
-		public void VerifyDecryption(GpgResult result)
-		{
-			if (!valid)
+			private StubGpgResultVerifier(bool valid)
 			{
-				throw new GpgError("Invalid result.");
+				this.valid = valid;
 			}
-		}
 
-		public void VerifyEncryption(GpgResult result)
-		{
-			if (!valid)
+			public void VerifyDecryption(GpgResult result)
 			{
-				throw new GpgError("Invalid result.");
+				if (!valid)
+				{
+					throw new GpgError("Invalid result.");
+				}
 			}
-		}
 
-		public static IGpgResultVerifier AlwaysValid => new StubGpgResultVerifier(true);
+			public void VerifyEncryption(GpgResult result)
+			{
+				if (!valid)
+				{
+					throw new GpgError("Invalid result.");
+				}
+			}
+
+			public static IGpgResultVerifier AlwaysValid => new StubGpgResultVerifier(true);
+		}
 	}
 }

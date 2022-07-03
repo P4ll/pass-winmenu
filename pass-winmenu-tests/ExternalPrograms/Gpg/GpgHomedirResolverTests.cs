@@ -17,7 +17,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			var environment = StubEnvironment.Create()
 				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
 				.Build();
-			var resolver = new GpgHomedirResolver(config, environment, new MockFileSystem());
+			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
 
 			var homeDir = resolver.GetHomeDir();
 
@@ -32,7 +32,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
 				.WithEnvironmentVariable("GNUPGHOME", @"C:\gpg")
 				.Build();
-			var resolver = new GpgHomedirResolver(config, environment, new MockFileSystem());
+			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
 
 			var homeDir = resolver.GetHomeDir();
 
@@ -47,7 +47,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
 				.WithEnvironmentVariable("GNUPGHOME", @"C:\gpg")
 				.Build();
-			var resolver = new GpgHomedirResolver(config, environment, new MockFileSystem());
+			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
 
 			var homeDir = resolver.GetHomeDir();
 

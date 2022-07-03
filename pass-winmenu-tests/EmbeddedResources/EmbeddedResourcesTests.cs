@@ -1,4 +1,3 @@
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 
@@ -6,9 +5,7 @@ namespace PassWinmenuTests.EmbeddedResources
 {
 		public class EmbeddedResourcesTests
 	{
-		private const string Category = "Core: Embedded resources";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void EmbeddedResources_ContainsVersionString()
 		{
 			PassWinmenu.EmbeddedResources.Load();

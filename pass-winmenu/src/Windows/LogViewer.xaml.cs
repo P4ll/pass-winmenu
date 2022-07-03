@@ -19,7 +19,7 @@ namespace PassWinmenu.Windows
 
 		public void AddMessage(string message)
 		{
-			this.Dispatcher.Invoke(() =>
+			Dispatcher.Invoke(() =>
 			{
 				LogTextBox.Text += $"{message}\n";
 				LogTextBox.Select(LogTextBox.Text.Length - 1, 0);

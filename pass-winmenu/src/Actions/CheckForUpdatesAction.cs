@@ -4,7 +4,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Actions
 {
-	class CheckForUpdatesAction : IAction
+	internal class CheckForUpdatesAction : IAction
 	{
 		private readonly UpdateChecker updateChecker;
 		private readonly INotificationService notificationService;
@@ -19,13 +19,6 @@ namespace PassWinmenu.Actions
 
 		public void Execute()
 		{
-			if (updateChecker == null)
-			{
-				notificationService.Raise($"Update checking is disabled in the configuration file.",
-					Severity.Info);
-				return;
-			}
-
 			if (!updateChecker.CheckForUpdates())
 			{
 				var latest = updateChecker.LatestVersion;

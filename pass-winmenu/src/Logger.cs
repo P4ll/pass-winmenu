@@ -11,7 +11,7 @@ using System.Windows.Threading;
 #nullable enable
 namespace PassWinmenu
 {
-	enum LogLevel
+	internal enum LogLevel
 	{
 		Debug,
 		Info,
@@ -37,7 +37,7 @@ namespace PassWinmenu
 		}
 	}
 
-	static class Log
+	internal static class Log
 	{
 		private static StreamWriter? writer;
 		public static List<LogLine> History { get; } = new List<LogLine>();
@@ -54,7 +54,10 @@ namespace PassWinmenu
 
 		public static void EnableFileLogging()
 		{
-			if (writer != null) return;
+			if (writer != null)
+			{
+				return;
+			}
 
 			try
 			{
@@ -135,7 +138,10 @@ namespace PassWinmenu
 					// Only log the stacktrace if there is no inner exception,
 					// otherwise the inner exception can print it instead.
 					var stackFrames = trace.GetFrames();
-					if (stackFrames == null) return;
+					if (stackFrames == null)
+					{
+						return;
+					}
 
 					foreach (var frame in stackFrames)
 					{

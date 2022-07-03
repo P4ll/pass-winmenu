@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace PassWinmenu.Hotkeys
@@ -19,10 +19,6 @@ namespace PassWinmenu.Hotkeys
 		/// The key that is to be pressed with <paramref name="modifierKeys"/>
 		/// in order to trigger the hotkey.
 		/// </param>
-		/// <param name="repeats">
-		/// Whether the hotkey is to fire multiple times if held down
-		/// continuously.
-		/// </param>
 		/// <param name="firedHandler">
 		/// The method to be called when the hotkey fires.
 		/// </param>
@@ -34,13 +30,11 @@ namespace PassWinmenu.Hotkeys
 		/// <paramref name="firedHandler"/> was null.
 		/// </exception>
 		/// <exception cref="HotkeyException">
-		/// An error occured in registering the hotkey.
+		/// An error occurred in registering the hotkey.
 		/// </exception>
 		IDisposable Register(
 			ModifierKeys modifierKeys,
-			Key          key,
-			bool         repeats,
-			EventHandler firedHandler
-			);
+			Key key,
+			EventHandler firedHandler);
 	}
 }

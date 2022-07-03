@@ -29,7 +29,7 @@ namespace PassWinmenu.PasswordManagement
 			PasswordFileParser passwordFileParser,
 			PasswordStoreConfig configuration)
 		{
-			this.PasswordStore = passwordStore;
+			PasswordStore = passwordStore;
 			this.cryptoService = cryptoService;
 			this.recipientFinder = recipientFinder;
 			this.passwordFileParser = passwordFileParser;
@@ -81,7 +81,10 @@ namespace PassWinmenu.PasswordManagement
 		/// If set to false, the contents of the entire file are considered to be the password.</param>
 		public KeyedPasswordFile DecryptPassword(PasswordFile file, bool passwordOnFirstLine)
 		{
-			if (!file.FileInfo.Exists) throw new ArgumentException($"The password file \"{file.FullPath}\" does not exist.");
+			if (!file.FileInfo.Exists)
+			{
+				throw new ArgumentException($"The password file \"{file.FullPath}\" does not exist.");
+			}
 
 			var content = cryptoService.Decrypt(file.FullPath);
 			return passwordFileParser.Parse(file, content, !passwordOnFirstLine);

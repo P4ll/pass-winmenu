@@ -70,7 +70,10 @@ namespace PassWinmenu.Configuration
 				{
 					return LoadResult.NeedsUpgrade;
 				}
-				if (versionCheck["config-version"] as string != Program.LastConfigVersion) return LoadResult.NeedsUpgrade;
+				if (versionCheck["config-version"] as string != Program.LastConfigVersion)
+				{
+					return LoadResult.NeedsUpgrade;
+				}
 			}
 
 			using (var reader = File.OpenText(fileName))

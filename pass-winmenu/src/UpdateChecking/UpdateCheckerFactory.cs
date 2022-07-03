@@ -10,52 +10,43 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.UpdateChecking
 {
-	static class UpdateCheckerFactory
+	internal static class UpdateCheckerFactory
 	{
 		public static UpdateChecker CreateUpdateChecker(UpdateCheckingConfig updateCfg, INotificationService notificationService)
 		{
-			IUpdateSource updateSource;
-			switch (updateCfg.UpdateSource)
+			IUpdateSource updateSource = updateCfg.UpdateSource switch
 			{
-				case UpdateSource.GitHub:
-					updateSource = new GitHubUpdateSource();
-					break;
-				case UpdateSource.Chocolatey:
-					updateSource = new ChocolateyUpdateSource();
-					break;
-				case UpdateSource.Dummy:
-					updateSource = new DummyUpdateSource
+				UpdateSource.GitHub => new GitHubUpdateSource(),
+				UpdateSource.Chocolatey => new ChocolateyUpdateSource(),
+				UpdateSource.Dummy => new DummyUpdateSource
+				{
+					Versions = new List<ProgramVersion>
 					{
-						Versions = new List<ProgramVersion>
+						new ProgramVersion {VersionNumber = new SemanticVersion(10, 0, 0), Important = true,},
+						new ProgramVersion
 						{
-							new ProgramVersion
-							{
-								VersionNumber = new SemanticVersion(10, 0, 0),
-								Important = true,
-							},
-							new ProgramVersion
-							{
-								VersionNumber = SemanticVersion.Parse("v11.0-pre1", ParseMode.Lenient),
-								IsPrerelease = true,
-							},
-						}
-					};
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(null, "Invalid update provider.");
-			}
+							VersionNumber = SemanticVersion.Parse("v11.0-pre1", ParseMode.Lenient),
+							IsPrerelease = true,
+						},
+					}
+				},
+				_ => throw new ArgumentOutOfRangeException(null, "Invalid update provider.")
+			};
+
 			var versionString = Program.Version.Split('-').First();
 
-			var updateChecker = new UpdateChecker(updateSource,
-			                                  SemanticVersion.Parse(versionString, ParseMode.Lenient),
-			                                  updateCfg.AllowPrereleases,
-			                                  updateCfg.CheckIntervalTimeSpan,
-			                                  updateCfg.InitialDelayTimeSpan);
+			var updateChecker = new UpdateChecker(
+				updateSource,
+				SemanticVersion.Parse(versionString, ParseMode.Lenient),
+				updateCfg.AllowPrereleases,
+				updateCfg.CheckIntervalTimeSpan,
+				updateCfg.InitialDelayTimeSpan);
 
 			updateChecker.UpdateAvailable += (sender, args) =>
 			{
 				notificationService.HandleUpdateAvailable(args);
 			};
+
 			return updateChecker;
 		}
 	}

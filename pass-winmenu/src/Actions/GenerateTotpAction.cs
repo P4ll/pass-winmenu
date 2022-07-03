@@ -8,7 +8,7 @@ using PassWinmenu.Windows;
 #nullable enable
 namespace PassWinmenu.Actions
 {
-	class GenerateTotpAction
+	internal class GenerateTotpAction
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
@@ -35,7 +35,10 @@ namespace PassWinmenu.Actions
 		{
 			var selectedFile = dialogCreator.RequestPasswordFile();
 			// If the user cancels their selection, the password decryption should be cancelled too.
-			if (selectedFile == null) return;
+			if (selectedFile == null)
+			{
+				return;
+			}
 
 			KeyedPasswordFile passwordFile;
 			try
@@ -59,7 +62,7 @@ namespace PassWinmenu.Actions
 				{
 					if (copyToClipboard)
 					{
-						ClipboardHelper.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
+						TemporaryClipboard.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
 						if (ConfigManager.Config.Notifications.Types.TotpCopied)
 						{
 							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.ClipboardTimeout:0.##} seconds.", Severity.Info);

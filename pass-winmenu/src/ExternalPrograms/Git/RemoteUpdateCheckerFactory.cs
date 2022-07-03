@@ -3,7 +3,7 @@ using PassWinmenu.Utilities;
 
 namespace PassWinmenu.ExternalPrograms
 {
-	class RemoteUpdateCheckerFactory
+	internal class RemoteUpdateCheckerFactory
 	{
 		private readonly Option<ISyncService> syncService;
 		private readonly GitConfig gitConfig;

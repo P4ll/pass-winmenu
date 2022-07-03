@@ -2,7 +2,7 @@ using PassWinmenu.ExternalPrograms.Gpg;
 
 namespace PassWinmenuTests.Utilities
 {
-	class FakeGpgAgentConfigReader : IGpgAgentConfigReader
+	internal class FakeGpgAgentConfigReader : IGpgAgentConfigReader
 	{
 		private string[] currentLines;
 

@@ -43,7 +43,10 @@ namespace PassWinmenu.WinApi
 		private string FindInPath(string fileName)
 		{
 			// The filename must end with with .exe
-			if (!fileName.EndsWith(".exe", StringComparison.Ordinal)) fileName = fileName + ".exe";
+			if (!fileName.EndsWith(".exe", StringComparison.Ordinal))
+			{
+				fileName += ".exe";
+			}
 
 			var path = environment.GetEnvironmentVariable("PATH");
 			if (path == null)
@@ -55,7 +58,10 @@ namespace PassWinmenu.WinApi
 			foreach (var dir in directories)
 			{
 				var nameToTest = fileSystem.Path.Combine(dir, fileName);
-				if (fileSystem.File.Exists(nameToTest)) return nameToTest;
+				if (fileSystem.File.Exists(nameToTest))
+				{
+					return nameToTest;
+				}
 			}
 
 			throw new ExecutableNotFoundException("Executable not found in PATH.");
@@ -66,7 +72,10 @@ namespace PassWinmenu.WinApi
 			var invalidPathChars = fileSystem.Path.GetInvalidPathChars();
 			foreach (var path in pathList.Split(';'))
 			{
-				if (string.IsNullOrWhiteSpace(path)) continue;
+				if (string.IsNullOrWhiteSpace(path))
+				{
+					continue;
+				}
 
 				if (path.Any(c => invalidPathChars.Contains(c)))
 				{

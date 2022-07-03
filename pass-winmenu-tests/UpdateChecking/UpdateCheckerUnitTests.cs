@@ -4,16 +4,13 @@ using System.Threading;
 using McSherry.SemanticVersioning;
 using PassWinmenu.UpdateChecking;
 using PassWinmenu.UpdateChecking.Dummy;
-using PassWinmenuTests.Utilities;
 using Xunit;
 
 namespace PassWinmenuTests.UpdateChecking
 {
 		public class UpdateCheckerUnitTests
 	{
-		private const string Category = "Updates: update sources";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_TriggersOnNewerVersion()
 		{
 			var raisesMajor = RaisesEvent(new SemanticVersion(1, 1, 1), new SemanticVersion(2, 0, 0));
@@ -24,14 +21,14 @@ namespace PassWinmenuTests.UpdateChecking
 			Assert.True(raisesPatch);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_IgnoresEqualVersion()
 		{
 			var raisesEqual = RaisesEvent(new SemanticVersion(1, 0, 0), new SemanticVersion(1, 0, 0));
 			Assert.False(raisesEqual);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_IgnoresOlderVersion()
 		{
 			var raisesMajor = RaisesEvent(new SemanticVersion(2, 2, 2), new SemanticVersion(1, 3, 3));
@@ -42,7 +39,7 @@ namespace PassWinmenuTests.UpdateChecking
 			Assert.False(raisesPatch);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_RaisesAfterSpecifiedTime()
 		{
 			const int checkBeforeMs = 800;
@@ -73,7 +70,7 @@ namespace PassWinmenuTests.UpdateChecking
 
 			// Validate that the event has been raised now.
 			Thread.Sleep(checkAgainMs);
-			for (int i = 0; i < checkAttempts && !raised; i++)
+			for (var i = 0; i < checkAttempts && !raised; i++)
 			{
 				Thread.Sleep(checkAgainMs);
 			}
@@ -82,7 +79,7 @@ namespace PassWinmenuTests.UpdateChecking
 		}
 
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_UpdatesPreReleases()
 		{
 			var current = SemanticVersion.Parse("2.0.0-pre2", ParseMode.Lenient);
@@ -159,7 +156,7 @@ namespace PassWinmenuTests.UpdateChecking
 			}
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_ProvidesCorrectReleaseType()
 		{
 			var sourceWithNewerPrerelease = new DummyUpdateSource
@@ -241,7 +238,10 @@ namespace PassWinmenuTests.UpdateChecking
 			for (var i = 0; i < 20; i++)
 			{
 				Thread.Sleep(50);
-				if (raised) break;
+				if (raised)
+				{
+					break;
+				}
 			}
 
 			Assert.True(raised, "Update checker did not raise event.");
@@ -277,7 +277,10 @@ namespace PassWinmenuTests.UpdateChecking
 			for (var i = 0; i < 20; i++)
 			{
 				Thread.Sleep(50);
-				if (raised) return true;
+				if (raised)
+				{
+					return true;
+				}
 			}
 
 			return raised;

@@ -62,7 +62,7 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				ClipboardHelper.Place(passFile.Metadata, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+				TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
 				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
@@ -77,7 +77,10 @@ namespace PassWinmenu.Windows
 		public void GetKey(bool copyToClipboard, bool type, string? key)
 		{
 			var selectedFile = RequestPasswordFile();
-			if (selectedFile == null) return;
+			if (selectedFile == null)
+			{
+				return;
+			}
 
 			KeyedPasswordFile passFile;
 			try
@@ -138,7 +141,7 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				ClipboardHelper.Place(chosenValue, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+				TemporaryClipboard.Place(chosenValue, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
 				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
@@ -224,10 +227,10 @@ namespace PassWinmenu.Windows
 			menu.ShowDialog();
 			if (menu.Success)
 			{
-				return menu.Selection;
+				return Option.Some(menu.Selection);
 			}
 
-			return Option<TEntry>.None;
+			return default;
 		}
 
 	}

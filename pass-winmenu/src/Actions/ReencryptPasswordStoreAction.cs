@@ -14,7 +14,7 @@ using PassWinmenu.Windows;
 
 namespace PassWinmenu.Actions
 {
-	class ReencryptPasswordStoreAction : IAction
+	internal class ReencryptPasswordStoreAction : IAction
 	{
 		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;

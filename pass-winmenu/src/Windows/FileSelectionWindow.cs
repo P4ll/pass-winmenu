@@ -14,63 +14,80 @@ namespace PassWinmenu.Windows
 		private readonly DirectoryAutocomplete autocomplete;
 		private readonly IDirectoryInfo baseDirectory;
 
-		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration, string hint) : base(configuration, hint)
+		private bool hasSuggestionForEnteredFileName;
+
+		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration,
+			string hint) : base(configuration, hint)
 		{
 			this.baseDirectory = baseDirectory;
 			autocomplete = new DirectoryAutocomplete(baseDirectory);
 			var completions = autocomplete.GetCompletionList("");
-			ResetLabels(completions);
+			ResetItems(completions);
 		}
 
 		protected override void OnSearchTextChanged(object sender, TextChangedEventArgs e)
 		{
-			var completions = autocomplete.GetCompletionList(SearchBox.Text).ToList();
-			if (!string.IsNullOrWhiteSpace(SearchBox.Text)
+			var query = SearchBox.Text;
+			var completions = autocomplete.GetCompletionList(query);
+
+			var isValidNonexistentFileName = !string.IsNullOrWhiteSpace(query)
 				&& !SearchBox.Text.EndsWith("/", StringComparison.Ordinal)
-				&& !completions.Contains(SearchBox.Text))
+				&& !completions.Contains(query);
+
+			if (isValidNonexistentFileName)
 			{
-				completions.Insert(0, SearchBox.Text);
+				completions.Insert(0, query);
 			}
-			ResetLabels(completions);
+
+			hasSuggestionForEnteredFileName = isValidNonexistentFileName;
+			ResetItems(completions);
 		}
 
-		protected override void HandleSelect()
+		protected override void HandleConfirm()
 		{
-			if (SelectedLabel == null) return;
-
 			var selection = SelectionText;
-			if (selection == null) return;
 
-			// If a suggestion is selected, put that suggestion in the searchbox.
-			if (Options.IndexOf(SelectedLabel) > 0 || string.IsNullOrEmpty(SearchBox.Text))
+			var existingFileSuggestionsStartAt = hasSuggestionForEnteredFileName ? 1 : 0;
+			var hasSelectedExistingFileSuggestion = Labels.IndexOf(SelectedLabel) >= existingFileSuggestionsStartAt;
+
+			if (hasSelectedExistingFileSuggestion)
 			{
-				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
-				{
-					selection = selection.Substring(0, selection.Length - 4);
-				}
+				selection = TrimEncryptedFileExtension(selection);
 				SetSearchBoxText(selection);
+				return;
 			}
-			else
+
+			if (SearchBox.Text.EndsWith("/", StringComparison.Ordinal))
 			{
-				if (SearchBox.Text.EndsWith("/", StringComparison.Ordinal))
-				{
-					return;
-				}
-				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
-				{
-					MessageBox.Show("A .gpg extension will be added automatically and does not need to be entered here.");
-					selection = selection.Substring(0, selection.Length - 4);
-					SetSearchBoxText(selection);
-					return;
-				}
-				if (File.Exists(Path.Combine(baseDirectory.FullName, selection + Program.EncryptedFileExtension)))
-				{
-					MessageBox.Show($"The password file \"{selection + Program.EncryptedFileExtension}\" already exists.");
-					return;
-				}
-				Success = true;
-				Close();
+				return;
 			}
+
+			if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
+			{
+				MessageBox.Show("A .gpg extension will be added automatically and does not need to be entered here.");
+				selection = TrimEncryptedFileExtension(selection);
+				SetSearchBoxText(selection);
+				return;
+			}
+
+			if (File.Exists(Path.Combine(baseDirectory.FullName, selection + Program.EncryptedFileExtension)))
+			{
+				MessageBox.Show($"The password file \"{selection + Program.EncryptedFileExtension}\" already exists.");
+				return;
+			}
+
+			Success = true;
+			Close();
+		}
+
+		private string TrimEncryptedFileExtension(string selection)
+		{
+			if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
+			{
+				return selection.Substring(0, selection.Length - Program.EncryptedFileExtension.Length);
+			}
+
+			return selection;
 		}
 	}
 }

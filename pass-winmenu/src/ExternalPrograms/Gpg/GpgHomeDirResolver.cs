@@ -3,18 +3,19 @@ using System.IO.Abstractions;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	class GpgHomedirResolver : IGpgHomedirResolver
+	internal class GpgHomeDirResolver : IGpgHomedirResolver
 	{
-		private const string defaultHomeDirName = "gnupg";
-		private const string homedirEnvironmentVariableName = "GNUPGHOME";
+		private const string DefaultHomeDirName = "gnupg";
+		private const string HomeDirEnvironmentVariableName = "GNUPGHOME";
 
 		private readonly GpgConfig config;
 		private readonly IEnvironment environment;
 		private readonly IFileSystem fileSystem;
 
-		public GpgHomedirResolver(GpgConfig config, IEnvironment environment, IFileSystem fileSystem)
+		public GpgHomeDirResolver(GpgConfig config, IEnvironment environment, IFileSystem fileSystem)
 		{
 			this.config = config;
 			this.environment = environment;
@@ -24,30 +25,23 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <summary>
 		/// Returns the path GPG will use as its home directory.
 		/// </summary>
-		/// <returns></returns>
 		public string GetHomeDir() => GetConfiguredHomeDir() ?? GetDefaultHomeDir();
 
 		/// <summary>
 		/// Returns the home directory as configured by the user, or null if no home directory has been defined.
 		/// </summary>
-		/// <returns></returns>
-		public string GetConfiguredHomeDir()
+		public string? GetConfiguredHomeDir()
 		{
-			if (config.GnupghomeOverride != null)
-			{
-				return config.GnupghomeOverride;
-			}
-			return environment.GetEnvironmentVariable(homedirEnvironmentVariableName);
+			return config.GnupghomeOverride ?? environment.GetEnvironmentVariable(HomeDirEnvironmentVariableName);
 		}
 
 		/// <summary>
 		/// Returns the default home directory used by GPG when no user-defined home directory is available.
 		/// </summary>
-		/// <returns></returns>
 		public string GetDefaultHomeDir()
 		{
 			var appData = environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			return fileSystem.Path.Combine(appData, defaultHomeDirName);
+			return fileSystem.Path.Combine(appData, DefaultHomeDirName);
 		}
 	}
 }

@@ -10,12 +10,13 @@ using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
 
+#nullable enable
 namespace PassWinmenu.Actions
 {
 	/// <summary>
 	/// Edit an existing password.
 	/// </summary>
-	class EditPasswordAction : IAction
+	internal class EditPasswordAction : IAction
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
@@ -46,7 +47,10 @@ namespace PassWinmenu.Actions
 		public void Execute()
 		{
 			var selectedFile = dialogCreator.RequestPasswordFile();
-			if (selectedFile == null) return;
+			if (selectedFile == null)
+			{
+				return;
+			}
 
 			if (config.UseBuiltin)
 			{

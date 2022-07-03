@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -9,17 +7,6 @@ namespace PassWinmenu.Utilities
 {
 	internal static class Helpers
 	{
-		/// <summary>
-		/// Retrieves an <see cref="Exception"/> representing the last Win32
-		/// error.
-		/// </summary>
-		internal static Exception LastWin32Exception()
-		{
-			return Marshal.GetExceptionForHR(
-				Marshal.GetHRForLastWin32Error()
-				);
-		}
-
 		/// <summary>
 		/// Converts an ARGB hex colour code into a Color object.
 		/// </summary>

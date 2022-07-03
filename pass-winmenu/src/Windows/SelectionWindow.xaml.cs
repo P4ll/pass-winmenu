@@ -20,24 +20,22 @@ namespace PassWinmenu.Windows
 	/// </summary>
 	internal abstract partial class SelectionWindow
 	{
-		private readonly int scrollBoundary;
+		private readonly ScrollableView<string> scrollableView;
 		private readonly StyleConfig styleConfig;
 		private readonly bool tryRemainOnTop = true;
-		private int scrollOffset;
 		private bool isClosing;
 		private bool firstActivation = true;
-		private List<string> optionStrings = new List<string>();
 
-		protected readonly List<SelectionLabel> Options = new List<SelectionLabel>();
+		protected readonly List<SelectionLabel> Labels = new List<SelectionLabel>();
 		/// <summary>
 		/// The label that is currently selected.
 		/// </summary>
-		public SelectionLabel? SelectedLabel { get; protected set; }
+		public SelectionLabel SelectedLabel { get; private set; }
 
 		/// <summary>
 		/// The text of the currently selected label.
 		/// </summary>
-		public string? SelectionText => SelectedLabel?.Text;
+		public string SelectionText => SelectedLabel.Text;
 
 		/// <summary>
 		/// True if the user has chosen one of the options, false otherwise.
@@ -48,7 +46,7 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// A search hint to show when the search box is empty.
 		/// </summary>
-		public string HintText { get; set; } = "";
+		public string HintText { get; set; }
 
 		/// <summary>
 		/// Initialises the window with the provided options.
@@ -57,7 +55,6 @@ namespace PassWinmenu.Windows
 		{
 			HintText = hint;
 			styleConfig = ConfigManager.Config.Interface.Style;
-			scrollBoundary = ConfigManager.Config.Interface.Style.ScrollBoundary;
 
 			// Position and size the window according to user configuration.
 			Matrix fromDevice;
@@ -88,6 +85,18 @@ namespace PassWinmenu.Windows
 			InitializeComponent();
 
 			InitialiseLabels(configuration.Orientation);
+			SelectedLabel = Labels[0];
+			ApplySelectionStyle(SelectedLabel);
+
+			scrollableView = new ScrollableView<string>(
+				Array.Empty<string>(),
+				new ScrollableViewOptions
+				{
+					ScrollBoundarySize = ConfigManager.Config.Interface.Style.ScrollBoundary,
+					ViewPortSize = Labels.Count,
+				});
+			scrollableView.ViewPortChanged += OnViewPortChanged;
+			scrollableView.SelectionIndexChanged += OnSelectionIndexChanged;
 
 			SearchBox.BorderBrush = styleConfig.Search.BorderColour;
 			SearchBox.CaretBrush = styleConfig.CaretColour;
@@ -107,6 +116,21 @@ namespace PassWinmenu.Windows
 			BorderThickness = styleConfig.BorderWidth;
 		}
 
+		private void OnSelectionIndexChanged(object sender, int index)
+		{
+			var relativeIndex = index - scrollableView.ViewPortStart;
+			
+			ApplyDeselectionStyle(SelectedLabel);
+			SelectedLabel = Labels[relativeIndex];
+			ApplySelectionStyle(SelectedLabel);
+		}
+
+		private void OnViewPortChanged(object sender, int viewPortStart)
+		{
+			var itemsInView = scrollableView.ItemsInView;
+			SetLabelContents(itemsInView);
+		}
+
 
 		private void InitialiseLabels(Orientation orientation)
 		{
@@ -121,16 +145,17 @@ namespace PassWinmenu.Windows
 				// First measure how high the search box wants to be.
 				SearchBox.Measure(new Size(double.MaxValue, double.MaxValue));
 				// Now find out how much space we have to lay out our labels.
-				var availableSpace = MaxHeight // Start with the maximum window height
-				                   - Padding.Top - Padding.Bottom // Subtract window padding
-				                   - WindowDock.Margin.Top - WindowDock.Margin.Bottom // Subtract window dock margin
-				                   - SearchBox.DesiredSize.Height // Subtract size of the search box (includes margins)
-				                   - OptionsPanel.Margin.Top - OptionsPanel.Margin.Bottom; // Subtract the margins of the options panel
+				var availableSpace =
+					MaxHeight // Start with the maximum window height
+					- Padding.Top - Padding.Bottom // Subtract window padding
+					- WindowDock.Margin.Top - WindowDock.Margin.Bottom // Subtract window dock margin
+					- SearchBox.DesiredSize.Height // Subtract size of the search box (includes margins)
+					- OptionsPanel.Margin.Top - OptionsPanel.Margin.Bottom; // Subtract the margins of the options panel
 
 				var labelHeight = CalculateLabelHeight();
 
 				var labelFit = availableSpace / labelHeight;
-				labelCount = (int)labelFit;
+				labelCount = (int) labelFit;
 
 				if (!styleConfig.ScaleToFit)
 				{
@@ -143,7 +168,8 @@ namespace PassWinmenu.Windows
 			for (var i = 0; i < labelCount; i++)
 			{
 				var label = CreateLabel($"label_{i}");
-				AddLabel(label);
+				Labels.Add(label);
+				OptionsPanel.Children.Add(label);
 			}
 		}
 
@@ -166,12 +192,12 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// Resets the labels to the given option strings, and scrolls back to the top.
 		/// </summary>
-		protected void ResetLabels(IEnumerable<string> options)
+		protected void ResetItems(IEnumerable<string> options)
 		{
-			scrollOffset = 0;
-			optionStrings = options.ToList();
-			SetLabelContents(optionStrings);
+			scrollableView.ResetItems(options);
+			SetLabelContents(scrollableView.ItemsInView);
 		}
+
 		private void OnSearchTextChangedInternal(object sender, TextChangedEventArgs e)
 		{
 			OnSearchTextChanged(sender, e);
@@ -181,60 +207,38 @@ namespace PassWinmenu.Windows
 		/// Sets the contents of the labels to the given values,
 		/// hiding any labels that did not receive a value.
 		/// </summary>
-		private void SetLabelContents(List<string> values)
+		private void SetLabelContents(IReadOnlyList<string> values)
 		{
-			// First unset our selection.
-			UnselectCurrent();
-			for (var i = 0; i < Options.Count; i++)
+			for (var i = 0; i < Labels.Count; i++)
 			{
 				if (values.Count > i)
 				{
-					// Only select a label if we've supplied one or more values,
-					// and only if it's the first label.
-					if (i == 0)
-					{
-						SelectFirst();
-					}
-					Options[i].Visibility = Visibility.Visible;
-					Options[i].Text = values[i];
+					Labels[i].Visibility = Visibility.Visible;
+					Labels[i].Text = values[i];
 				}
 				else
 				{
-					Options[i].Visibility = Visibility.Hidden;
+					Labels[i].Visibility = Visibility.Hidden;
 				}
 			}
 		}
 
-		/// <summary>
-		/// Selects a label; deselecting the previously selected label.
-		/// </summary>
-		/// <param name="label">The label to be selected. If this value is null, the selected label will not be changed.</param>
-		protected void Select(SelectionLabel? label)
+		private void ApplySelectionStyle(SelectionLabel label)
 		{
-			if (label == null) return;
-
-			if (SelectedLabel != null)
-			{
-				SelectedLabel.Background = styleConfig.Options.BackgroundColour;
-				SelectedLabel.Foreground = styleConfig.Options.TextColour;
-				SelectedLabel.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
-				SelectedLabel.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
-			}
-			SelectedLabel = label;
-			SelectedLabel.Background = styleConfig.Selection.BackgroundColour;
-			SelectedLabel.Foreground = styleConfig.Selection.TextColour;
-			SelectedLabel.LabelBorder.BorderBrush = styleConfig.Selection.BorderColour;
-			SelectedLabel.LabelBorder.BorderThickness = styleConfig.Selection.BorderWidth;
+			var selectStyle = styleConfig.Selection;
+			label.Background = selectStyle.BackgroundColour;
+			label.Foreground = selectStyle.TextColour;
+			label.LabelBorder.BorderBrush = selectStyle.BorderColour;
+			label.LabelBorder.BorderThickness = selectStyle.BorderWidth;
 		}
 
-		private void UnselectCurrent()
+		private void ApplyDeselectionStyle(SelectionLabel label)
 		{
-			if (SelectedLabel == null) return;
-			SelectedLabel.Background = styleConfig.Options.BackgroundColour;
-			SelectedLabel.Foreground = styleConfig.Options.TextColour;
-			SelectedLabel.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
-			SelectedLabel.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
-			SelectedLabel = null;
+			var deselectStyle = styleConfig.Options;
+			label.Background = deselectStyle.BackgroundColour;
+			label.Foreground = deselectStyle.TextColour;
+			label.LabelBorder.BorderBrush = deselectStyle.BorderColour;
+			label.LabelBorder.BorderThickness = deselectStyle.BorderWidth;
 		}
 
 		protected SelectionLabel CreateLabel(string content)
@@ -249,23 +253,17 @@ namespace PassWinmenu.Windows
 			{
 				if (label == SelectedLabel)
 				{
-					HandleSelect();
+					HandleConfirm();
 				}
 				else
 				{
-					Select(label);
-					HandleSelectionChange(label);
+					var myIndex = Labels.IndexOf(label);
+					scrollableView.SelectIndex(scrollableView.ViewPortStart + myIndex);
 				}
 				// Return focus to the searchbox so the user can continue typing immediately.
 				SearchBox.Focus();
 			};
 			return label;
-		}
-
-		protected void AddLabel(SelectionLabel label)
-		{
-			Options.Add(label);
-			OptionsPanel.Children.Add(label);
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -280,7 +278,10 @@ namespace PassWinmenu.Windows
 			base.OnActivated(e);
 
 			// Whenever the window is activated, the search box should gain focus.
-			if (!isClosing) SearchBox.Focus();
+			if (!isClosing)
+			{
+				SearchBox.Focus();
+			}
 		}
 
 		// Whenever the window loses focus, we reactivate it so it's brought to the front again, allowing it
@@ -288,7 +289,10 @@ namespace PassWinmenu.Windows
 		protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			base.OnLostKeyboardFocus(e);
-			if (!isClosing && tryRemainOnTop) Activate();
+			if (!isClosing && tryRemainOnTop)
+			{
+				Activate();
+			}
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -297,158 +301,27 @@ namespace PassWinmenu.Windows
 			isClosing = true;
 		}
 
-		/// <summary>
-		/// Finds the first non-hidden label to the left of the label at the specified index.
-		/// </summary>
-		/// <param name="index">The position in the label list where searching should begin.</param>
-		/// <returns>The first label matching this condition, or null if no matching labels were found.</returns>
-		private SelectionLabel? FindPrevious(int index)
-		{
-			var previous = index - 1;
-			if (previous >= 0)
-			{
-				var opt = Options[previous];
-				return opt.Visibility == Visibility.Visible ? Options[previous] : FindPrevious(previous);
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		/// <summary>
-		/// Finds the first non-hidden label to the right of the label at the specified index.
-		/// </summary>
-		/// <param name="index">The position in the label list where searching should begin.</param>
-		/// <returns>The first label matching this condition, or null if no matching labels were found.</returns>
-		private SelectionLabel? FindNext(int index)
-		{
-			var next = index + 1;
-			if (next < Options.Count)
-			{
-				var opt = Options[next];
-				return opt.Visibility == Visibility.Visible ? Options[next] : FindNext(next);
-			}
-			else
-			{
-				return null;
-			}
-		}
-
 		protected void SetSearchBoxText(string text)
 		{
 			SearchBox.Text = text;
 			SearchBox.CaretIndex = text.Length;
 		}
 
-		protected virtual void HandleSelectionChange(SelectionLabel selection) { }
+		protected abstract void HandleConfirm();
 
-
-		protected abstract void HandleSelect();
-
-		protected bool IsPressed(HotkeyConfig hotkey)
+		private bool IsPressed(HotkeyConfig hotkey)
 		{
+			// TODO: Don't parse the key combination on every key event
 			var combination = KeyCombination.Parse(hotkey.Hotkey);
 
 			if (combination.Key != Key.None)
 			{
-				if (!Keyboard.IsKeyDown(combination.Key)) return false;
-			}
-			return (Keyboard.Modifiers == combination.ModifierKeys);
-		}
-
-		private void SelectNext()
-		{
-			if (SelectedLabel == null)
-			{
-				SelectFirst();
-				return;
-			}
-			var selectionIndex = Options.IndexOf(SelectedLabel);
-			if (selectionIndex < Options.Count)
-			{
-				// Number of options that we're out of the scrolling bounds
-				var boundsOffset = selectionIndex + scrollBoundary + 2 - Options.Count;
-
-				if (boundsOffset <= 0 || scrollOffset + Options.Count >= optionStrings.Count)
+				if (!Keyboard.IsKeyDown(combination.Key))
 				{
-					var label = FindNext(selectionIndex);
-					if (label != null)
-					{
-						Select(label);
-						HandleSelectionChange(label);
-					}
-					else
-					{
-						// I have no idea if this branch is actually possible.
-						// Ideally I'd refactor this class, split off the label selection logic,
-						// and test it, but this will have to do...
-						Log.Send("Unable to find next label. If you ever see this message, please create a bug report for it.");
-					}
+					return false;
 				}
-				else
-				{
-					scrollOffset += 1;
-					var current = SelectedLabel;
-					SetLabelContents(optionStrings.Skip(scrollOffset).ToList());
-					Select(current);
-				}
-
 			}
-		}
-
-		private void SelectPrevious()
-		{
-			if (SelectedLabel == null)
-			{
-				SelectFirst();
-				return;
-			}
-			var selectionIndex = Options.IndexOf(SelectedLabel);
-			if (selectionIndex >= 0)
-			{
-				// Number of options that we're out of the scrolling bounds
-				var boundsOffset = scrollBoundary + 1 - selectionIndex;
-
-				if (boundsOffset <= 0 || scrollOffset - 1 < 0)
-				{
-					var label = FindPrevious(selectionIndex);
-					if (label != null)
-					{
-						Select(label);
-						HandleSelectionChange(label);
-					}
-					else
-					{
-						// See SelectNext()
-						Log.Send("Unable to find previous label. If you ever see this message, please create a bug report for it.");
-					}
-				}
-				else
-				{
-					scrollOffset -= 1;
-					var current = SelectedLabel;
-					SetLabelContents(optionStrings.Skip(scrollOffset).ToList());
-					Select(current);
-				}
-
-			}
-		}
-
-		private void SelectFirst()
-		{
-			if (!Options.Any()) return;
-			var label = Options.First();
-			Select(label);
-			HandleSelectionChange(label);
-		}
-
-		private void SelectLast()
-		{
-			if (!Options.Any()) return;
-			var label = Options.Last();
-			Select(label);
-			HandleSelectionChange(label);
+			return Keyboard.Modifiers == combination.ModifierKeys;
 		}
 
 		private void SearchBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -464,16 +337,16 @@ namespace PassWinmenu.Windows
 					switch (match.Action)
 					{
 						case HotkeyAction.SelectNext:
-							SelectNext();
+							scrollableView.SelectNext();
 							break;
 						case HotkeyAction.SelectPrevious:
-							SelectPrevious();
+							scrollableView.SelectPrevious();
 							break;
 						case HotkeyAction.SelectFirst:
-							SelectFirst();
+							scrollableView.SelectFirst();
 							break;
 						case HotkeyAction.SelectLast:
-							SelectLast();
+							scrollableView.SelectLast();
 							break;
 					}
 				}
@@ -485,16 +358,16 @@ namespace PassWinmenu.Windows
 				case Key.Left:
 				case Key.Up:
 					e.Handled = true;
-					SelectPrevious();
+					scrollableView.SelectPrevious();
 					break;
 				case Key.Right:
 				case Key.Down:
 					e.Handled = true;
-					SelectNext();
+					scrollableView.SelectNext();
 					break;
 				case Key.Enter:
 					e.Handled = true;
-					HandleSelect();
+					HandleConfirm();
 					break;
 				case Key.Escape:
 					e.Handled = true;
@@ -507,11 +380,11 @@ namespace PassWinmenu.Windows
 		{
 			if (e.Delta > 0)
 			{
-				SelectPrevious();
+				scrollableView.SelectPrevious();
 			}
 			else if (e.Delta < 0)
 			{
-				SelectNext();
+				scrollableView.SelectNext();
 			}
 		}
 	}

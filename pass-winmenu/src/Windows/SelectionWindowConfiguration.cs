@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PassWinmenu.Configuration;
 using PassWinmenu.Utilities.ExtensionMethods;
-using Screen=System.Windows.Forms.Screen;
-using Cursor=System.Windows.Forms.Cursor;
+using Screen = System.Windows.Forms.Screen;
+using Cursor = System.Windows.Forms.Cursor;
 
 namespace PassWinmenu.Windows
 {
@@ -46,9 +46,7 @@ namespace PassWinmenu.Windows
 				throw new ConfigurationParseException($"Unable to parse the menu dimensions from the config file (reason: {e.Message})", e);
 			}
 
-			Orientation orientation;
-
-			if (!Enum.TryParse(config.Interface.Style.Orientation, true, out orientation))
+			if (!Enum.TryParse(config.Interface.Style.Orientation, true, out Orientation orientation))
 			{
 				throw new ConfigurationParseException("Unable to parse the menu orientation from the config file.");
 			}

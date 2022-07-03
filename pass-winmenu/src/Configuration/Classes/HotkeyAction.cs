@@ -3,9 +3,9 @@ namespace PassWinmenu.Configuration
 	internal enum HotkeyAction
 	{
 		DecryptPassword, // Decrypt a password
-		GenerateTotpCode, // Generate a totp code
 		AddPassword, // Add a new password
 		EditPassword, // Edit a password
+		GenerateTotpCode, // Generate a totp code
 		DecryptMetadata, // Fetch the metadata from a password
 		PasswordField, // Fetch the field from a metadata key
 		GitPull, // Run `git pull` on the password store

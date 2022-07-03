@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
 using PassWinmenu.Utilities;
+using PInvoke;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
@@ -46,7 +47,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			Thread.Sleep(100);
 			
 			// We have the window handle, see if it's the foreground window.
-			var foregroundHandle = NativeMethods.GetForegroundWindow();
+			var foregroundHandle = User32.GetForegroundWindow();
 			
 			if (pinentry.MainWindowHandle != foregroundHandle)
 			{
@@ -59,7 +60,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				Log.Send($"  StartTime: {process.StartTime:O}");
 				// Looks like pinentry has failed to bring itself to the foreground, let's help it out.
 				// TODO: Take foreground access and grant it to pinentry.
-				var windowSet = NativeMethods.SetForegroundWindow(pinentry.MainWindowHandle);
+				var windowSet = User32.SetForegroundWindow(pinentry.MainWindowHandle);
 				if (windowSet)
 				{
 					Log.Send("Sent pinentry window to foreground");

@@ -6,7 +6,7 @@ using PassWinmenu.Windows;
 #nullable enable
 namespace PassWinmenu.Actions
 {
-	class ActionDispatcher
+	internal class ActionDispatcher
 	{
 		private readonly DialogCreator dialogCreator;
 		private readonly DecryptPasswordAction decryptPasswordAction;

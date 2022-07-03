@@ -6,7 +6,7 @@ using PassWinmenu.Utilities;
 #nullable enable
 namespace PassWinmenu.PasswordManagement
 {
-	class TotpGenerator
+	internal class TotpGenerator
 	{
 		private static readonly Regex OtpSecretRegex = new Regex("secret=([a-zA-Z0-9]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 

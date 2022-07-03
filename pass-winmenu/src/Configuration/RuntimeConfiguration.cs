@@ -21,7 +21,7 @@ namespace PassWinmenu.Configuration
 				}
 				else
 				{
-					throw new RuntimeConfigurationError($"Invalid argument: {args[1]}");
+					throw new RuntimeConfigurationException($"Invalid argument: {args[1]}");
 				}
 			}
 

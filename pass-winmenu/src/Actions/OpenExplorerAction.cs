@@ -4,7 +4,7 @@ using PassWinmenu.ExternalPrograms;
 
 namespace PassWinmenu.Actions
 {
-	class OpenExplorerAction : IAction
+	internal class OpenExplorerAction : IAction
 	{
 		private readonly IProcesses processes;
 		private readonly PasswordStoreConfig passwordStore;

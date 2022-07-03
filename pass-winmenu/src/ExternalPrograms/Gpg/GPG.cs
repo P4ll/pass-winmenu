@@ -21,8 +21,8 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		{
 			this.gpgTransport = gpgTransport;
 			this.gpgResultVerifier = gpgResultVerifier;
-			this.enablePinentryFix = gpgConfig.PinentryFix;
-			this.additionalOptions = gpgConfig.AdditionalOptions;
+			enablePinentryFix = gpgConfig.PinentryFix;
+			additionalOptions = gpgConfig.AdditionalOptions;
 		}
 
 		/// <summary>
@@ -33,7 +33,11 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <exception cref="GpgException">Thrown when decryption fails.</exception>
 		public string Decrypt(string file)
 		{
-			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
+			if (enablePinentryFix)
+			{
+				pinentryWatcher.BumpPinentryWindow();
+			}
+
 			var result = CallGpg($"--decrypt \"{file}\"", null, additionalOptions.Decrypt);
 			gpgResultVerifier.VerifyDecryption(result);
 			return result.RawStdout;
@@ -48,7 +52,11 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <exception cref="GpgException">Thrown when encryption fails.</exception>
 		public void Encrypt(string data, string outputFile, bool allowOverwrite, params string[] recipients)
 		{
-			if (recipients == null) recipients = Array.Empty<string>();
+			if (recipients == null)
+			{
+				recipients = Array.Empty<string>();
+			}
+
 			var recipientList = string.Join(" ", recipients.Select(r => $"--recipient \"{r}\""));
 			var overwrite = allowOverwrite ? "--yes " : "";
 
@@ -84,7 +92,11 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		public string[] Sign(string message, string keyId)
 		{
-			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
+			if (enablePinentryFix)
+			{
+				pinentryWatcher.BumpPinentryWindow();
+			}
+
 			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.StdoutMessages;
 		}

@@ -15,13 +15,6 @@
 // suppressed, by adding it below here:
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "program", Scope = "member", Target = "PassWinmenu.Windows.MainWindow.#Dispose()")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "repo", Scope = "member", Target = "PassWinmenu.ExternalPrograms.Git.#Dispose()")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "downloadUpdate", Scope = "member", Target = "PassWinmenu.WinApi.Notifications.#Dispose()")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "git", Scope = "member", Target = "PassWinmenu.Program.#Dispose()")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "hotkeys", Scope = "member", Target = "PassWinmenu.Program.#Dispose()")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "updateChecker", Scope = "member", Target = "PassWinmenu.Program.#Dispose()")]
-
 // Ideally we'd only enable this on Exception types, but I have no idea how to do that.
 [assembly: SuppressMessage(
 	"Usage", 
@@ -31,6 +24,7 @@ using System.Diagnostics.CodeAnalysis;
 	"Design",
 	"CA1032:Implement standard exception constructors",
 	Justification = "These exceptions are only used internally and must always be created with an exception message.")]
+
 [assembly: SuppressMessage(
 	"Design", 
 	"CA1031:Do not catch general exception types",

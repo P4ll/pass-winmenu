@@ -9,7 +9,11 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 	{
 		private static string ToCamelOrPascalCase(string str, Func<char, char> firstLetterTransform)
 		{
-			if (string.IsNullOrWhiteSpace(str)) return str;
+			if (string.IsNullOrWhiteSpace(str))
+			{
+				return str;
+			}
+
 			var input = str;
 			var pattern = "([_\\-])(?<char>[a-z])";
 			var num = 1;
@@ -39,7 +43,10 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 		public static int[] ToCodePoints(this string str)
 		{
 			// TODO: test handling of surrogate pairs
-			if (str == null) throw new ArgumentNullException(nameof(str));
+			if (str == null)
+			{
+				throw new ArgumentNullException(nameof(str));
+			}
 
 			if (!str.IsNormalized())
 			{
@@ -51,7 +58,9 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 			{
 				codePoints.Add(char.ConvertToUtf32(str, i));
 				if (char.IsHighSurrogate(str[i]))
+				{
 					i += 1;
+				}
 			}
 
 			return codePoints.ToArray();

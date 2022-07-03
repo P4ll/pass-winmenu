@@ -3,7 +3,7 @@ using PassWinmenu.Configuration;
 
 namespace PassWinmenu.Actions
 {
-	class EditConfigurationAction : IAction
+	internal class EditConfigurationAction : IAction
 	{
 		public void Execute()
 		{

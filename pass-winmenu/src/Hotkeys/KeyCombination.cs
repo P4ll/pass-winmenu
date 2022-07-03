@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
-# nullable enable
+#nullable enable
 namespace PassWinmenu.Hotkeys
 {
 	internal struct KeyCombination
@@ -41,9 +41,13 @@ namespace PassWinmenu.Hotkeys
 				else if (Enum.TryParse(keyStr, true, out Key parsedKey))
 				{
 					if (keys == Key.None)
+					{
 						keys = parsedKey;
+					}
 					else
+					{
 						throw new ArgumentException("A hotkey may not consist of multiple non-modifier keys.");
+					}
 				}
 				else
 				{

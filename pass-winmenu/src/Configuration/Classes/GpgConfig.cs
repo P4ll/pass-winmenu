@@ -12,7 +12,10 @@ namespace PassWinmenu.Configuration
 			get => gpgPath;
 			set
 			{
-				if (value == null) gpgPath = null;
+				if (value == null)
+				{
+					gpgPath = null;
+				}
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);
@@ -27,7 +30,10 @@ namespace PassWinmenu.Configuration
 			get => gnupghomeOverride;
 			set
 			{
-				if (value == null) gnupghomeOverride = null;
+				if (value == null)
+				{
+					gnupghomeOverride = null;
+				}
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);

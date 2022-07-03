@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace PassWinmenu.Utilities
 {
@@ -9,9 +9,9 @@ namespace PassWinmenu.Utilities
 	public sealed class Disposable
 		: IDisposable
 	{
-		private readonly Action _dispose;
-		private readonly bool   _allowMultipleDispose;
-		private          bool   _disposed;
+		private readonly Action dispose;
+		private readonly bool allowMultipleDispose;
+		private bool disposed;
 
 		/// <summary>
 		/// Creates an <see cref="IDisposable"/> wrapper around a specified
@@ -30,14 +30,9 @@ namespace PassWinmenu.Utilities
 		/// </exception>
 		public Disposable(Action action, bool allowMultipleDispose)
 		{
-			if (action == null)
-			{
-				throw new ArgumentNullException(nameof(action));
-			}
-
-			_dispose = action;
-			_allowMultipleDispose = allowMultipleDispose;
-			_disposed = false;
+			dispose = action ?? throw new ArgumentNullException(nameof(action));
+			this.allowMultipleDispose = allowMultipleDispose;
+			disposed = false;
 		}
 		/// <summary>
 		/// Creates an <see cref="IDisposable"/> wrapper around a specified
@@ -65,11 +60,13 @@ namespace PassWinmenu.Utilities
 		/// </summary>
 		public void Dispose()
 		{
-			if (!_allowMultipleDispose && _disposed)
+			if (!allowMultipleDispose && disposed)
+			{
 				return;
+			}
 
-			_dispose();
-			_disposed = true;
+			dispose();
+			disposed = true;
 		}
 	}
 }

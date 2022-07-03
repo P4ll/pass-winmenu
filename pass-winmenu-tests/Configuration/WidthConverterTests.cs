@@ -1,6 +1,5 @@
 using System.Windows;
 using PassWinmenu.Configuration;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 using YamlDotNet.Core;
@@ -10,9 +9,7 @@ namespace PassWinmenuTests.Configuration
 {
 	public class WidthConverterTests
 	{
-		private const string Category = "External: Configuration File";
-
-		[Theory, TestCategory(Category)]
+		[Theory]
 		[InlineData("0", 0)]
 		[InlineData("1.77", 1.77)]
 		[InlineData("1.2e-3", 1.2e-3)]
@@ -29,7 +26,7 @@ namespace PassWinmenuTests.Configuration
 				() => obj.Border.Right.ShouldBe(expected));
 		}
 
-		[Theory, TestCategory(Category)]
+		[Theory]
 		[InlineData("text")]
 		public void Deserialize_InvalidInput_ThrowsException(string thickness)
 		{

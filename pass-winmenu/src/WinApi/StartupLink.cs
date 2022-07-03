@@ -80,8 +80,6 @@ namespace PassWinmenu.WinApi
 
 			var t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
 			dynamic shell = Activator.CreateInstance(t);
-			// We use try/finally to ensure the resources we create get cleaned up,
-			// while still allowing exceptions to propagate up the call stack.
 			try
 			{
 				var lnk = shell.CreateShortcut(ShortcutPath);

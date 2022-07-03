@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	class GpgAgentConfigReader : IGpgAgentConfigReader
+	internal class GpgAgentConfigReader : IGpgAgentConfigReader
 	{
 		private const string GpgAgentConfigFileName = "gpg-agent.conf";
 

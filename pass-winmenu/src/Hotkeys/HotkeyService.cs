@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using PassWinmenu.Actions;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Hotkeys
 {
-	internal class HotkeyManager : IDisposable
+	internal class HotkeyService : IDisposable
 	{
 		private readonly List<IDisposable> registrations = new List<IDisposable>();
 		private readonly IHotkeyRegistrar registrar;
@@ -15,31 +14,9 @@ namespace PassWinmenu.Hotkeys
 		/// <summary>
 		/// Create a new hotkey manager.
 		/// </summary>
-		public HotkeyManager()
+		public HotkeyService(IHotkeyRegistrar registrar)
 		{
-			registrar = HotkeyRegistrars.Windows;
-		}
-
-		/// <summary>
-		/// Register a new hotkey with Windows.
-		/// </summary>
-		/// <param name="keys">A KeyCombination object representing the keys to be pressed.</param>
-		/// <param name="action">The action to be executed when the hotkey is pressed.</param>
-		public void AddHotKey(KeyCombination keys, Action action)
-		{
-			var reg = registrar.Register(keys.ModifierKeys, keys.Key, false, (sender, args) =>
-			{
-				action.Invoke();
-			});
-			registrations.Add(reg);
-		}
-
-		public void Dispose()
-		{
-			foreach (var reg in registrations)
-			{
-				reg.Dispose();
-			}
+			this.registrar = registrar;
 		}
 
 		public void AssignHotkeys(IEnumerable<HotkeyConfig> config, ActionDispatcher actionDispatcher, INotificationService notificationService)
@@ -93,6 +70,28 @@ namespace PassWinmenu.Hotkeys
 					throw new HotkeyException($"The hotkey \"{hotkey.Hotkey}\" is already registered by another application.");
 				}
 			}
+		}
+
+		public void Dispose()
+		{
+			foreach (var reg in registrations)
+			{
+				reg.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Register a new hotkey with Windows.
+		/// </summary>
+		/// <param name="keys">A KeyCombination object representing the keys to be pressed.</param>
+		/// <param name="action">The action to be executed when the hotkey is pressed.</param>
+		private void AddHotKey(KeyCombination keys, Action action)
+		{
+			var reg = registrar.Register(keys.ModifierKeys, keys.Key, (sender, args) =>
+			{
+				action.Invoke();
+			});
+			registrations.Add(reg);
 		}
 	}
 }

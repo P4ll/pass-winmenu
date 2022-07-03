@@ -6,8 +6,6 @@ namespace PassWinmenu.ExternalPrograms
 	public interface IProcess
 	{
 		int Id { get; }
-		string MainModuleName { get; }
-		DateTime StartTime { get; }
 		StreamWriter StandardInput { get; }
 		StreamReader StandardOutput { get; }
 		StreamReader StandardError { get; }

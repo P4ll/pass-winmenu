@@ -9,9 +9,7 @@ namespace PassWinmenuTests.Utilities
 	/// </summary>
 		public class DisposableTests
 	{
-		private const string Category = "Utilities: IDisposable wrapper";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void _Is_IDisposable()
 		{
 			var d = new Disposable(() => {});
@@ -19,7 +17,7 @@ namespace PassWinmenuTests.Utilities
 			Assert.True(d is IDisposable);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Throws_OnNullAction()
 		{
 			Assert.Throws<ArgumentNullException>(
@@ -33,7 +31,7 @@ namespace PassWinmenuTests.Utilities
 				() => new Disposable(null));
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Dispose_DisallowMultipleDispose()
 		{
 			int i = 0;
@@ -45,7 +43,7 @@ namespace PassWinmenuTests.Utilities
 
 			Assert.Equal(1, i);
 		}
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Dispose_AllowMultipleDispose()
 		{
 			int i = 0;

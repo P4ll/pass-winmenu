@@ -7,7 +7,5 @@ namespace PassWinmenuTests.Utilities
 	/// </summary>
 	public class HelpersTests
 	{
-		private const string Category = "Utilities: Helpers";
-
 	}
 }

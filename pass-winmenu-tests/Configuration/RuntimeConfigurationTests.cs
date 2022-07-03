@@ -17,13 +17,13 @@ namespace PassWinmenuTests.Configuration
 		[Fact]
 		public void Parse_InvalidArgs_ThrowsRuntimeConfigurationError()
 		{
-			Should.Throw<RuntimeConfigurationError>(() => RuntimeConfiguration.Parse(new[] { "app.exe", "--not-an-option" }));
+			Should.Throw<RuntimeConfigurationException>(() => RuntimeConfiguration.Parse(new[] { "app.exe", "--not-an-option" }));
 		}
 
 		[Fact]
 		public void Parse_MissingArg_ThrowsRuntimeConfigurationError()
 		{
-			Should.Throw<RuntimeConfigurationError>(() => RuntimeConfiguration.Parse(new[] { "app.exe", "--config-file" }));
+			Should.Throw<RuntimeConfigurationException>(() => RuntimeConfiguration.Parse(new[] { "app.exe", "--config-file" }));
 		}
 
 		[Fact]

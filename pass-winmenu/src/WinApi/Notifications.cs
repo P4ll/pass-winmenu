@@ -20,7 +20,7 @@ namespace PassWinmenu.WinApi
 	{
 		public NotifyIcon Icon { get; set; }
 
-		private readonly string downloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
+		private const string DownloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
 		private readonly ToolStripMenuItem downloadUpdate;
 		private readonly ToolStripSeparator downloadSeparator;
 		private const int ToolTipTimeoutMs = 5000;
@@ -164,7 +164,7 @@ namespace PassWinmenu.WinApi
 
 		private void HandleDownloadUpdateClick(object sender, EventArgs e)
 		{
-			Process.Start(downloadUpdateString);
+			Process.Start(DownloadUpdateString);
 		}
 
 		public void HandleUpdateAvailable(UpdateAvailableEventArgs args)
@@ -201,32 +201,25 @@ namespace PassWinmenu.WinApi
 
 		public void Dispose()
 		{
-			Icon?.Dispose();
-			downloadUpdate?.Dispose();
-			downloadSeparator?.Dispose();
+			Icon.Dispose();
+			downloadUpdate.Dispose();
+			downloadSeparator.Dispose();
 		}
 
 		public void SetSyncState(SyncState state)
 		{
-			switch (state)
+			Icon.Icon = state switch
 			{
-				case SyncState.UpToDate:
-					Icon.Icon = EmbeddedResources.Icon;
-					break;
-				case SyncState.Ahead:
-					Icon.Icon = EmbeddedResources.IconAhead;
-					break;
-				case SyncState.Behind:
-					Icon.Icon = EmbeddedResources.IconBehind;
-					break;
-				case SyncState.Diverged:
-					Icon.Icon = EmbeddedResources.IconDiverged;
-					break;
-			}
+				SyncState.UpToDate => EmbeddedResources.Icon,
+				SyncState.Ahead => EmbeddedResources.IconAhead,
+				SyncState.Behind => EmbeddedResources.IconBehind,
+				SyncState.Diverged => EmbeddedResources.IconDiverged,
+				_ => Icon.Icon
+			};
 		}
 	}
 
-	enum Severity
+	internal enum Severity
 	{
 		None,
 		Info,

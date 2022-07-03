@@ -13,6 +13,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 	internal class GitHubUpdateSource : IUpdateSource
 	{
 		private static readonly Uri UpdateUrl = new Uri("https://api.github.com/repos/geluk/pass-winmenu/releases");
+		private static readonly Uri DefaultDownloadUrl = new Uri("https://github.com/geluk/pass-winmenu/releases");
 
 		public bool RequiresConnectivity => true;
 
@@ -23,10 +24,10 @@ namespace PassWinmenu.UpdateChecking.GitHub
 
 			return new ProgramVersion
 			{
-				VersionNumber = release.Version,
-				DownloadLink = release.HtmlUrl,
+				VersionNumber = release.ParseVersion(),
+				DownloadLink = release.HtmlUrl ?? DefaultDownloadUrl,
 				ReleaseDate = release.PublishedAt,
-				ReleaseNotes = release.HtmlUrl,
+				ReleaseNotes = release.HtmlUrl ?? DefaultDownloadUrl,
 				IsPrerelease = release.Prerelease,
 				Important = important,
 			};
@@ -56,8 +57,11 @@ namespace PassWinmenu.UpdateChecking.GitHub
 
 		private bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (sslPolicyErrors == SslPolicyErrors.None) return true;
-			
+			if (sslPolicyErrors == SslPolicyErrors.None)
+			{
+				return true;
+			}
+
 			Log.Send($"Server certificate failed to validate: {sslPolicyErrors}", LogLevel.Warning);
 			return false;
 		}

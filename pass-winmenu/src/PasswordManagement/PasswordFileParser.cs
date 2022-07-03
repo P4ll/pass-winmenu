@@ -74,7 +74,11 @@ namespace PassWinmenu.PasswordManagement
 				case UsernameDetectionMethod.LineNumber:
 					var extraLines = passwordFile.Metadata.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 					var lineNumber = options.LineNumber - 2;
-					if (lineNumber < 0) throw new PasswordParseException($"The username may not be located on line #{options.LineNumber}.");
+					if (lineNumber < 0)
+					{
+						throw new PasswordParseException($"The username may not be located on line #{options.LineNumber}.");
+					}
+
 					return lineNumber < extraLines.Length ? extraLines[lineNumber] : null;
 				case UsernameDetectionMethod.Regex:
 					var rgxOptions = options.RegexOptions.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
